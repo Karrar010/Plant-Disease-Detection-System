@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plants Disease Detection</title>
+    <link rel="StyleSheet" href = "style.css">
+    
+</head>
+<body>
+    <img src = "gikilogo-removebg-preview.png" alt = "giki" height = 250 class="center">
+    <h1>AI202 PROJECT GIKI 2022246</h1>
+    <div class="container">
+        <h1>Plants Disease Detection</h1>
+        <h3>Select Plant for Disease Detection...</h3>
+        <br>
+        <div class="plant-types">
+            <div class="plant-type" onclick="selectPlant('apple')">Apple</div>
+            <div class="plant-type" onclick="selectPlant('cherry')">Cherry</div>
+            <div class="plant-type" onclick="selectPlant('corn')">Corn</div>
+            <div class="plant-type" onclick="selectPlant('grape')">Grape</div>
+            <div class="plant-type" onclick="selectPlant('peach')">Peach</div>
+            <div class="plant-type" onclick="selectPlant('pepper')">Pepper</div>
+            <div class="plant-type" onclick="selectPlant('potato')">Potato</div>
+            <div class="plant-type" onclick="selectPlant('strawberry')">Strawberry</div>
+            <div class="plant-type" onclick="selectPlant('tomato')">Tomato</div>
+        </div>
+        <input type="file" id="file-input" accept="image/*" onchange="uploadImage(event)">
+        <label for="file-input" id="file-label">Upload Image</label>
+    </div>
+    <script>
+        
+        function selectPlant(plantName) {
+            document.getElementById('file-label').innerText = `Upload ${plantName} Image`;
+            // Send the selected plant name to backend
+            fetch('/select-plant', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ plant: plantName })
+            }).then(response => {
+                // Handle response from backend
+                if (response.ok) {
+                    console.log('Plant selected:', plantName);
+                } else {
+                    console.error('Failed to select plant:', plantName);
+                }
+            }).catch(error => {
+                console.error('Error selecting plant:', error);
+            });
+        }
+
+        function uploadImage(event) {
+            const file = event.target.files[0];
+            if (file) {
+                // Send the image file to backend
+                const formData = new FormData();
+                formData.append('image', file);
+                fetch('/upload-image', {
+                    method: 'POST',
+                    body: formData
+                }).then(response => {
+                    // Handle response from backend
+                    if (response.ok) {
+                        console.log('Image uploaded successfully');
+                        // Display the disease type and accuracy on the webpage
+                    } else {
+                        console.error('Failed to upload image');
+                    }
+                }).catch(error => {
+                    console.error('Error uploading image:', error);
+                });
+            }
+        }
+    </script>
+</body>
+</html>
